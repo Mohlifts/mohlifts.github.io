@@ -184,19 +184,53 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .wordmark b { color: var(--accent); font-weight: 800; }
 .nav-right { display: flex; align-items: center; gap: 10px; }
-.lang {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 44px; min-width: 44px; padding: 0 14px;
+/* Language menu: a pill with an arrow that opens English / Deutsch */
+.langmenu { position: relative; }
+.langmenu summary {
+  list-style: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 14px;
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--ink);
   font-size: var(--step-small);
   font-weight: 600;
-  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
   transition: background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
 }
-.lang:hover { background: var(--surface-3); }
-.lang:active { transform: scale(0.94); }
+.langmenu summary::-webkit-details-marker { display: none; }
+.langmenu summary:hover { background: var(--surface-3); }
+.langmenu summary:active { transform: scale(0.94); }
+.langmenu-chev { transition: transform var(--t-ui) var(--ease-out); }
+.langmenu[open] .langmenu-chev { transform: rotate(180deg); }
+.langmenu[open] summary { background: var(--ink); color: var(--bg); }
+.langmenu-list {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  z-index: 60;
+  min-width: 170px;
+  display: grid; gap: 2px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45); /* taste-skill-ignore: menu floats */
+  transform-origin: top right;
+  animation: langmenu-in 220ms var(--ease-out);
+}
+@keyframes langmenu-in { from { opacity: 0; transform: translateY(-6px) scale(0.96); } }
+.langmenu-list a {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--t-hover) ease;
+}
+.langmenu-list a:hover { background: var(--surface-3); }
+.langmenu-list a[aria-current="page"] { color: var(--accent); }
+.langmenu-list a[aria-current="page"]::after { content: "✓"; }
 .nav-bar {
   display: flex;
   justify-content: safe center;

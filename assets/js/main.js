@@ -6,6 +6,13 @@
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const isPhone = () => window.matchMedia('(max-width: 720px)').matches;
 
+  /* Language menu closes on an outside tap or Escape */
+  const langmenu = document.querySelector('.langmenu');
+  if (langmenu) {
+    document.addEventListener('click', (e) => { if (langmenu.open && !langmenu.contains(e.target)) langmenu.open = false; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && langmenu.open) { langmenu.open = false; langmenu.querySelector('summary').focus(); } });
+  }
+
   /* Ripple on every button press */
   document.addEventListener('pointerdown', (e) => {
     const btn = e.target.closest('.btn');
