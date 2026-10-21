@@ -1,4 +1,7 @@
 (() => {
+  // German page sets lang="de" and points data-assets at the shared asset folder
+  const DE = document.documentElement.lang === 'de';
+  const ASSETS = document.documentElement.dataset.assets || 'assets/';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const isPhone = () => window.matchMedia('(max-width: 720px)').matches;
@@ -73,7 +76,8 @@
     const tick = (t) => {
       const p = Math.min(1, (t - start) / dur);
       const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = prefix + (target * eased).toFixed(decimals);
+      const v = (target * eased).toFixed(decimals);
+      el.textContent = prefix + (DE ? v.replace('.', ',') : v);
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -95,13 +99,14 @@
   const rPaceLabel = document.getElementById('r-pace-label');
 
   const val = (name) => form.querySelector(`input[name="${name}"]:checked`).value;
-  const fmt = (n) => Math.round(n).toLocaleString('en-US');
+  const fmt = (n) => Math.round(n).toLocaleString(DE ? 'de-DE' : 'en-US');
+  const dec = (n) => (DE ? n.toFixed(1).replace('.', ',') : n.toFixed(1));
   const ftIn = (cm) => {
     const inches = Math.round(cm / 2.54);
     return `${Math.floor(inches / 12)}′${inches % 12}″`;
   };
 
-  const WHY = {
+  const WHY_EN = {
     bulk: [
       'Your beginner gains are waiting. Eat in a small surplus and build your base.',
       'You have room to grow. A small surplus builds muscle without the fat.',
@@ -121,6 +126,27 @@
       'Time to cut. A structured deficit keeps your hard-earned muscle.'
     ]
   };
+  const WHY_DE = {
+    bulk: [
+      'Deine Anfänger-Gains warten. Iss leicht im Überschuss und bau deine Basis auf.',
+      'Du hast Platz zum Wachsen. Ein kleiner Überschuss baut Muskeln ohne Fett auf.',
+      'Du bist schlank genug zum Aufbauen. Ein kontrollierter Überschuss schlägt jeden Dirty Bulk.',
+      'Schlank und erfahren: Ein langsamer, kontrollierter Überschuss hält den Fortschritt am Laufen.'
+    ],
+    recomp: [
+      'Muskeln aufbauen und gleichzeitig Fett verlieren. Genau hier gewinnen Anfänger am meisten.',
+      'Muskeln aufbauen und gleichzeitig Fett verlieren. Perfekt für dein Level.',
+      'Bleib nah an deinem Erhaltungsbedarf, trainier hart und lass deinen Körper umbauen.',
+      'Halte dein Erhaltungsniveau und steigere deine Leistung. Kleine, stetige Schritte summieren sich.'
+    ],
+    cut: [
+      'Erst Fett verlieren, während du das Training lernst. Die Muskeln kommen schneller zum Vorschein, als du denkst.',
+      'Erst Fett verlieren und jedes Kilo Muskeln behalten. Dann zeigt sich dein Körper.',
+      'Eine gezielte Diät legt die Muskeln frei, die du schon aufgebaut hast.',
+      'Zeit für den Cut. Ein strukturiertes Defizit schützt deine hart erarbeiteten Muskeln.'
+    ]
+  };
+  const WHY = DE ? WHY_DE : WHY_EN;
   const LABEL = { bulk: 'Lean bulk', recomp: 'Recomp', cut: 'Cut' };
 
   const assess = ({ sex, h, w, exp }) => {
@@ -168,7 +194,7 @@
     const h = parseFloat(inH.value);
     const w = parseFloat(inW.value);
     outH.textContent = metric ? `${Math.round(h)} cm` : ftIn(h);
-    outW.textContent = metric ? `${w % 1 ? w.toFixed(1) : w} kg` : `${Math.round(w * 2.2046)} lbs`;
+    outW.textContent = metric ? `${w % 1 ? dec(w) : w} kg` : `${Math.round(w * 2.2046)} lbs`;
     setFill(inH); setFill(inW);
 
     const exp = parseInt(val('exp'), 10);
@@ -187,16 +213,16 @@
     rProtein.textContent = res.protein + ' g';
 
     if (res.verdict === 'recomp') {
-      rPace.textContent = 'Stable';
-      rPaceLabel.textContent = 'Weight per week';
+      rPace.textContent = DE ? 'Stabil' : 'Stable';
+      rPaceLabel.textContent = DE ? 'Gewicht pro Woche' : 'Weight per week';
     } else {
       const k = metric ? 1 : 2.2046;
       const unit = metric ? 'kg' : 'lbs';
       const sign = res.verdict === 'bulk' ? '+' : '−';
-      const a = Math.abs(res.pace[0] * k).toFixed(1);
-      const b = Math.abs(res.pace[1] * k).toFixed(1);
+      const a = dec(Math.abs(res.pace[0] * k));
+      const b = dec(Math.abs(res.pace[1] * k));
       rPace.textContent = `${sign}${a}–${b}`;
-      rPaceLabel.textContent = `${unit} per week`;
+      rPaceLabel.textContent = DE ? `${unit} pro Woche` : `${unit} per week`;
     }
   };
   form.addEventListener('input', update);
@@ -268,13 +294,13 @@
       const id = btn.dataset.id;
       cmp.classList.add('is-switching');
       const nextB = new Image(); const nextA = new Image();
-      nextB.src = `assets/img/client-${id}-before.jpg`;
-      nextA.src = `assets/img/client-${id}-after.jpg`;
+      nextB.src = `${ASSETS}img/client-${id}-before.jpg`;
+      nextA.src = `${ASSETS}img/client-${id}-after.jpg`;
       Promise.all([nextB.decode().catch(() => {}), nextA.decode().catch(() => {})]).then(() => {
         setTimeout(() => {
           before.src = nextB.src; after.src = nextA.src;
           before.style.objectPosition = after.style.objectPosition = btn.dataset.pos;
-          after.alt = 'Client after: ' + btn.dataset.alt;
+          after.alt = (DE ? 'Kunde nachher: ' : 'Client after: ') + btn.dataset.alt;
           range.value = 50; setPos(50);
           requestAnimationFrame(() => cmp.classList.remove('is-switching'));
         }, reduce ? 0 : 220);
@@ -309,7 +335,7 @@
     nudgeIo.observe(nextBtn);
   }
   (window.requestIdleCallback || setTimeout)(() => {
-    clients.forEach((c) => ['before', 'after'].forEach((t) => { new Image().src = `assets/img/client-${c.dataset.id}-${t}.jpg`; }));
+    clients.forEach((c) => ['before', 'after'].forEach((t) => { new Image().src = `${ASSETS}img/client-${c.dataset.id}-${t}.jpg`; }));
   });
 
   /* ---------- Story: words light up as you read ---------- */

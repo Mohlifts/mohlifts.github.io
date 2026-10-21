@@ -183,6 +183,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   letter-spacing: -0.03em;
 }
 .wordmark b { color: var(--accent); font-weight: 800; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.lang {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; min-width: 44px; padding: 0 14px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: var(--step-small);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+}
+.lang:hover { background: var(--surface-3); }
+.lang:active { transform: scale(0.94); }
 .nav-bar {
   display: flex;
   justify-content: safe center;
@@ -599,6 +613,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .truth { background: var(--inv); color: var(--on-inv); padding-block: var(--section); }
 .truth-inner { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 48px; }
 .truth-inner .h-section { grid-column: 1 / span 5; }
+/* Longer German headline gets the full width above the list */
+:lang(de) .truth-inner .h-section { grid-column: 1 / -1; }
 .strikes { grid-column: 6 / span 7; display: grid; gap: 10px; }
 .strikes li {
   font-size: var(--step-statement);
