@@ -184,6 +184,28 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .wordmark b { color: var(--accent); font-weight: 800; }
 .nav-right { display: flex; align-items: center; gap: 10px; }
+/* "Language →" hint pointing at the language menu */
+.lang-hint {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--step-small);
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.lang-hint-arrow { display: inline-block; animation: hint-nudge 1.6s var(--ease-out) infinite; }
+@keyframes hint-nudge { 0%, 60%, 100% { transform: translateX(0); } 30% { transform: translateX(5px); } }
+@media (prefers-reduced-motion: reduce) { .lang-hint-arrow { animation: none; } }
+.lbl-short { display: none; }
+@media (max-width: 720px) {
+  .lbl-long { display: none; }
+  .lbl-short { display: inline; }
+  .nav-right { gap: 8px; }
+  .lang-hint { gap: 4px; }
+  .langmenu summary { padding: 0 12px; }
+  .nav-top .btn-small { padding: 0 15px; }
+}
+@media (max-width: 340px) { .lang-hint-word { display: none; } }
+
 /* Language menu: a pill with an arrow that opens English / Deutsch */
 .langmenu { position: relative; }
 .langmenu summary {
